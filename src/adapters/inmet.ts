@@ -11,10 +11,6 @@ function stringish(v: unknown): string {
   return typeof v === 'string' || typeof v === 'number' ? String(v) : '';
 }
 
-function num(v: unknown): number | undefined {
-  return typeof v === 'number' && Number.isFinite(v) ? v : undefined;
-}
-
 function slug(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 }
@@ -43,29 +39,21 @@ function severityFromColor(color: string): AlertSeverity | undefined {
   if (c.includes('vermel') || c === 'red' || c === '#ff0000') return 'extreme';
   if (c.includes('laranja') || c === 'orange' || c === '#ffa500') return 'severe';
   if (c.includes('amarel') || c === 'yellow' || c === '#ffff00') return 'moderate';
-  if (c.includes('verde') || c === 'green') return 'minor';
   return undefined;
 }
 
 function severityAndLabel(alert: InmetAlert): { severity: AlertSeverity; label: string; inferred: boolean } {
-  const severityId = num(alert.severity_id);
   const rawSeverity = str(alert.severity);
-  if (severityId !== undefined) {
-    if (severityId >= 3) return { severity: 'extreme', label: rawSeverity || 'Grande Perigo', inferred: false };
-    if (severityId === 2) return { severity: 'severe', label: rawSeverity || 'Perigo', inferred: false };
-    if (severityId === 1) return { severity: 'moderate', label: rawSeverity || 'Perigo Potencial', inferred: false };
-    return { severity: 'minor', label: rawSeverity || 'Normal', inferred: false };
-  }
+  const s = rawSeverity.toLowerCase();
+  if (s.includes('grande')) return { severity: 'extreme', label: rawSeverity, inferred: false };
+  if (s.includes('potencial')) return { severity: 'moderate', label: rawSeverity, inferred: false };
+  if (s === 'perigo' || s.includes('perigo')) return { severity: 'severe', label: rawSeverity, inferred: false };
 
   const colorSeverity = severityFromColor(str(alert.color));
   if (colorSeverity) {
     return { severity: colorSeverity, label: rawSeverity || titleCase(str(alert.color)), inferred: true };
   }
 
-  const s = rawSeverity.toLowerCase();
-  if (s.includes('grande')) return { severity: 'extreme', label: rawSeverity, inferred: false };
-  if (s.includes('potencial')) return { severity: 'moderate', label: rawSeverity, inferred: false };
-  if (s === 'perigo' || s.includes('perigo')) return { severity: 'severe', label: rawSeverity, inferred: false };
   return { severity: 'unknown', label: rawSeverity || 'Unknown', inferred: true };
 }
 
@@ -78,7 +66,7 @@ export class InmetAdapter implements AlertAdapter {
 
   canHandle(attributes: Record<string, unknown>): boolean {
     return attributes['source'] === INMET_SOURCE
-      && typeof attributes['alert_id'] === 'string'
+      && stringish(attributes['alert_id']) !== ''
       && typeof attributes['description'] === 'string'
       && typeof attributes['severity'] === 'string';
   }
@@ -86,7 +74,7 @@ export class InmetAdapter implements AlertAdapter {
   parseAlerts(attributes: Record<string, unknown>): WeatherAlert[] {
     if (!this.canHandle(attributes)) return [];
     const alert = attributes as InmetAlert;
-    const alertId = str(alert.alert_id);
+    const alertId = stringish(alert.alert_id);
     const event = str(alert.description) || 'INMET Alert';
     const { severity, label: severityLabel, inferred } = severityAndLabel(alert);
     const sentTs = timestamp(alert.updated) || timestamp(alert.start_date);

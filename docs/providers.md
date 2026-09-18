@@ -220,10 +220,10 @@ sources:
   - inmet
 ```
 
-Severity comes from INMET's `severity_id` / `severity` fields. The adapter maps
-`Perigo Potencial` to moderate, `Perigo` to severe, and `Grande Perigo` to
-extreme. `risks` render as the description, `instructions` render as the action
-text, and the alert URL opens the matching INMET aviso page.
+Severity comes from INMET's textual `severity` field. The adapter maps `Perigo
+Potencial` to moderate, `Perigo` to severe, and `Grande Perigo` to extreme.
+`risks` render as the description, `instructions` render as the action text, and
+the alert URL opens the matching INMET aviso page.
 
 INMET entities carry the configured location's coordinates, so `showGeometry`
 draws a marker rather than an affected-area outline. Those coordinates also
@@ -331,6 +331,6 @@ badges reflect real provider data.
 | MeteoSwiss | Raw (from integer level) | Absent |
 | ECCC | Derived (max of `color`, `type`, `impact`; tilde only when all three are absent) | Mapped from `confidence` (High → Likely, Moderate → Possible, Low → Unlikely) |
 | NSW RFS | Raw (from `category`) | Absent |
-| INMET | Raw (from `severity_id` / `severity`) | Absent |
+| INMET | Raw (from `severity`) | Absent |
 | PirateWeather | Raw (from `severity`) | Absent |
 | CAP Alerts | Raw (from `severity_normalized` / `severity`) | Raw (from `certainty`) |

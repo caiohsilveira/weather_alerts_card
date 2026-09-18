@@ -157,10 +157,9 @@ describe('getAdapter', () => {
   it('auto-detects INMET from source + alert attributes', () => {
     const adapter = getAdapter(undefined, {
       source: 'inmet',
-      alert_id: '12345',
+      alert_id: 12345,
       description: 'Chuvas Intensas',
       severity: 'Perigo',
-      severity_id: 2,
     });
     expect(adapter.provider).toBe('inmet');
   });
