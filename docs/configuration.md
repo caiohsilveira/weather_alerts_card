@@ -19,8 +19,8 @@ Where the card gets its alerts. At least one of `entity`, `device`, `devices` or
 | `entities` | — | Additional alert entities to merge (e.g. DWD current + advance) |
 | `device` | — | HA `device_id` — auto-discovers all per-alert sensors under that device, and re-discovers as alerts come and go. CAP Alerts and NINA both produce this shape |
 | `devices` | — | Additional device ids, the same shape `entities` gives `entity`. An alert both devices carry is shown once; each device that goes dark is named on its own |
-| `sources` | — | Feed `source` attribute values to auto-collect, e.g. `['nsw_rural_fire_service_feed']` |
-| `provider` | auto-detect | `'nws'`, `'bom'`, `'meteoalarm'`, `'dwd'`, `'nina'`, `'meteoswiss'`, `'eccc'`, `'nsw_rfs'`, `'pirateweather'`, `'cap'` |
+| `sources` | — | Feed `source` attribute values to auto-collect, e.g. `['nsw_rural_fire_service_feed']` or `['inmet']` |
+| `provider` | auto-detect | `'nws'`, `'bom'`, `'meteoalarm'`, `'dwd'`, `'nina'`, `'meteoswiss'`, `'eccc'`, `'nsw_rfs'`, `'inmet'`, `'pirateweather'`, `'cap'` |
 
 ### Collecting a whole feed with `sources`
 
@@ -35,6 +35,8 @@ sources:
   - nsw_rural_fire_service_feed
 ```
 
+For INMET alerts, use the same shape with `sources: [inmet]`.
+
 `sources` is independent of `provider`: each collected entity still auto-detects its
 own adapter. In the visual editor this is the **Auto-collect from installed feeds**
 checkbox, which appears only when a matching integration is installed.
@@ -46,7 +48,7 @@ checkbox, which appears only when a matching integration is installed.
 | `zones` | — | Restrict to specific zone codes, matched against each alert's zone list |
 | `sortOrder` | `'default'` | `'default'`, `'onset'`, `'severity'` |
 | `minSeverity` | `'all'` | `'all'`, `'minor'`, `'moderate'`, `'severe'`, `'extreme'` |
-| `maxDistanceKm` | — | Hide point incidents further than this many kilometres from the reference point (HA home, or `myLocationEntity`). Point-incident providers only (NSW RFS) |
+| `maxDistanceKm` | — | Hide point incidents further than this many kilometres from the reference point (HA home, or `myLocationEntity`). Point-incident providers only (NSW RFS, INMET) |
 | `myLocationEntity` | — | `device_tracker` / `person` / `zone` whose coordinates replace HA home as the reference point, for `maxDistanceKm`, the distance row and `showMyLocation` |
 | `eventCodes` | — | Event codes to include, e.g. `['SVR', 'TOR']` (NWS) or `['31', '95']` (DWD) |
 | `excludeEventCodes` | — | Event codes to exclude, e.g. `['SCY']` (NWS) or `['22']` (DWD) |
@@ -69,7 +71,7 @@ always shown, on the principle that an unrankable alert must not be silently dro
 `maxDistanceKm` measures from the card's **reference point** — your Home Assistant home
 location (Settings → System → General) unless `myLocationEntity` names a `device_tracker`,
 `person` or `zone` entity, whose `latitude`/`longitude` then take over. It applies **only to
-providers that publish a per-incident point** — currently NSW RFS. Area warnings (NWS, CAP Alerts, BoM, DWD, MeteoAlarm, MeteoSwiss, ECCC,
+providers that publish a per-incident point** — currently NSW RFS and INMET. Area warnings (NWS, CAP Alerts, BoM, DWD, MeteoAlarm, MeteoSwiss, ECCC,
 PirateWeather) either cover your home point or they don't, so a radius has no meaning for
 them and they are never filtered, even on a mixed card. If no reference point resolves, the
 filter is skipped rather than hiding everything; an entity that is missing or momentarily
@@ -188,7 +190,7 @@ legibility-safe opacity. The wash is always solid.
 |---|---|---|
 | polygon (+ bbox) | CAP Alerts | bounding-box frame immediately, polygon outline once fetched out of band (frame alone on a cache miss) |
 | bbox only | CAP Alerts, polygon unavailable | the bounding-box frame |
-| point only | NSW RFS (any point-incident feed) | a severity-colored marker at the incident inside a ~20 km frame — town scale on the `map` style |
+| point only | NSW RFS, INMET (any point-incident feed) | a severity-colored marker at the incident inside a ~20 km frame — town scale on the `map` style |
 | nothing | NWS, BoM, DWD, MeteoAlarm, MeteoSwiss, ECCC, NINA, PirateWeather | no mini-map |
 
 For a point incident the frame is invented by the card, not published by the feed, so it
