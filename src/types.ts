@@ -367,7 +367,6 @@ export interface InmetAlert {
   alert_id?: string | number;
   description?: string;
   severity?: string;
-  severity_id?: string | number;
   risks?: string | string[];
   instructions?: string | string[];
   color?: string;

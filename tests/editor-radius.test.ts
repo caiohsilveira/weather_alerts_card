@@ -33,7 +33,6 @@ const inmetAttributes = {
   alert_id: '12345',
   description: 'Chuvas Intensas',
   severity: 'Perigo',
-  severity_id: 2,
   latitude: -22.9056,
   longitude: -47.0608,
 };

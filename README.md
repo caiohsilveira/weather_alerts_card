@@ -535,7 +535,7 @@ Severity and certainty badges are always localized to your configured language. 
 | MeteoSwiss | Raw (from integer level) | Absent |
 | ECCC | Derived (max of `color`, `type`, `impact`; tilde only when all three absent) | Mapped from `confidence` (High → Likely, Moderate → Possible, Low → Unlikely) |
 | NSW RFS | Raw (from `category` — the Australian Warning System ladder) | Absent |
-| INMET | Raw (from `severity_id` / `severity`) | Absent |
+| INMET | Raw (from `severity`) | Absent |
 | PirateWeather | Raw (from `severity` field) | Absent |
 | CAP Alerts | Raw (from `severity_normalized` / `severity`) | Raw (from `certainty` field) |
 

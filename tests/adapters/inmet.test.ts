@@ -9,7 +9,6 @@ function makeAlert(overrides: Partial<InmetAlert> = {}): Record<string, unknown>
     alert_id: '12345',
     description: 'Chuvas Intensas',
     severity: 'Perigo',
-    severity_id: 2,
     risks: ['Risco de corte de energia elétrica.', 'Risco de queda de galhos de árvores.'],
     instructions: ['Não se abrigue debaixo de árvores.', 'Evite usar aparelhos eletrônicos ligados à tomada.'],
     color: 'Laranja',
@@ -50,22 +49,31 @@ describe('InmetAdapter', () => {
   });
 
   describe('severity mapping', () => {
-    const cases: Array<[number | undefined, string, string, string, boolean]> = [
-      [3, 'Grande Perigo', 'Vermelho', 'extreme', false],
-      [2, 'Perigo', 'Laranja', 'severe', false],
-      [1, 'Perigo Potencial', 'Amarelo', 'moderate', false],
-      [0, 'Normal', 'Verde', 'minor', false],
-      [undefined, '', 'Laranja', 'severe', true],
-      [undefined, 'Perigo Potencial', '', 'moderate', false],
+    const cases: Array<[string, string, string, boolean]> = [
+      ['Grande Perigo', 'Vermelho', 'extreme', false],
+      ['Perigo', 'Laranja', 'severe', false],
+      ['Perigo Potencial', 'Amarelo', 'moderate', false],
+      ['', 'Laranja', 'severe', true],
     ];
 
-    for (const [severity_id, severity, color, expected, inferred] of cases) {
-      it(`maps severity_id ${severity_id ?? '(missing)'} to ${expected}`, () => {
-        const [alert] = adapter.parseAlerts(makeAlert({ severity_id, severity, color }));
+    for (const [severity, color, expected, inferred] of cases) {
+      it(`maps "${severity || color}" to ${expected}`, () => {
+        const [alert] = adapter.parseAlerts(makeAlert({ severity, color }));
         expect(alert.severity).toBe(expected);
         expect(alert.severityInferred).toBe(inferred);
       });
     }
+
+    it('does not use severity_id to classify INMET severity', () => {
+      const [alert] = adapter.parseAlerts(makeAlert({
+        severity: 'Perigo Potencial',
+        severity_id: 999,
+        color: 'Vermelho',
+      } as Record<string, unknown>));
+      expect(alert.severity).toBe('moderate');
+      expect(alert.severityLabel).toBe('Perigo Potencial');
+      expect(alert.severityInferred).toBe(false);
+    });
   });
 
   describe('parseAlerts', () => {
@@ -86,10 +94,9 @@ describe('InmetAdapter', () => {
       expect(alert.point).toEqual([-47.0608, -22.9056]);
     });
 
-    it('normalizes numeric ids and string severity ids from current INMET attributes', () => {
+    it('normalizes numeric ids from current INMET attributes', () => {
       const [alert] = adapter.parseAlerts(makeAlert({
         alert_id: 12345,
-        severity_id: '2',
       }));
       expect(alert.id).toBe('12345');
       expect(alert.severity).toBe('severe');

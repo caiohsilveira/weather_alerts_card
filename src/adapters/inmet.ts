@@ -11,15 +11,6 @@ function stringish(v: unknown): string {
   return typeof v === 'string' || typeof v === 'number' ? String(v) : '';
 }
 
-function num(v: unknown): number | undefined {
-  if (typeof v === 'number' && Number.isFinite(v)) return v;
-  if (typeof v === 'string' && v.trim() !== '') {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : undefined;
-  }
-  return undefined;
-}
-
 function slug(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 }
@@ -48,29 +39,21 @@ function severityFromColor(color: string): AlertSeverity | undefined {
   if (c.includes('vermel') || c === 'red' || c === '#ff0000') return 'extreme';
   if (c.includes('laranja') || c === 'orange' || c === '#ffa500') return 'severe';
   if (c.includes('amarel') || c === 'yellow' || c === '#ffff00') return 'moderate';
-  if (c.includes('verde') || c === 'green') return 'minor';
   return undefined;
 }
 
 function severityAndLabel(alert: InmetAlert): { severity: AlertSeverity; label: string; inferred: boolean } {
-  const severityId = num(alert.severity_id);
   const rawSeverity = str(alert.severity);
-  if (severityId !== undefined) {
-    if (severityId >= 3) return { severity: 'extreme', label: rawSeverity || 'Grande Perigo', inferred: false };
-    if (severityId === 2) return { severity: 'severe', label: rawSeverity || 'Perigo', inferred: false };
-    if (severityId === 1) return { severity: 'moderate', label: rawSeverity || 'Perigo Potencial', inferred: false };
-    return { severity: 'minor', label: rawSeverity || 'Normal', inferred: false };
-  }
+  const s = rawSeverity.toLowerCase();
+  if (s.includes('grande')) return { severity: 'extreme', label: rawSeverity, inferred: false };
+  if (s.includes('potencial')) return { severity: 'moderate', label: rawSeverity, inferred: false };
+  if (s === 'perigo' || s.includes('perigo')) return { severity: 'severe', label: rawSeverity, inferred: false };
 
   const colorSeverity = severityFromColor(str(alert.color));
   if (colorSeverity) {
     return { severity: colorSeverity, label: rawSeverity || titleCase(str(alert.color)), inferred: true };
   }
 
-  const s = rawSeverity.toLowerCase();
-  if (s.includes('grande')) return { severity: 'extreme', label: rawSeverity, inferred: false };
-  if (s.includes('potencial')) return { severity: 'moderate', label: rawSeverity, inferred: false };
-  if (s === 'perigo' || s.includes('perigo')) return { severity: 'severe', label: rawSeverity, inferred: false };
   return { severity: 'unknown', label: rawSeverity || 'Unknown', inferred: true };
 }
 
