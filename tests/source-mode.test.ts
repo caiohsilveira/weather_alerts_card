@@ -43,7 +43,7 @@ function rfsIncident(overrides: Record<string, unknown> = {}): Record<string, un
 function inmetAlert(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     source: INMET_SOURCE,
-    alert_id: `inmet-${Math.random()}`,
+    alert_id: Math.floor(Math.random() * 100000),
     description: 'Chuvas Intensas',
     severity: 'Perigo',
     severity_id: 2,

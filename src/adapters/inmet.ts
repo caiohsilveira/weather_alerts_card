@@ -12,7 +12,12 @@ function stringish(v: unknown): string {
 }
 
 function num(v: unknown): number | undefined {
-  return typeof v === 'number' && Number.isFinite(v) ? v : undefined;
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string' && v.trim() !== '') {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
 }
 
 function slug(s: string): string {
@@ -78,7 +83,7 @@ export class InmetAdapter implements AlertAdapter {
 
   canHandle(attributes: Record<string, unknown>): boolean {
     return attributes['source'] === INMET_SOURCE
-      && typeof attributes['alert_id'] === 'string'
+      && stringish(attributes['alert_id']) !== ''
       && typeof attributes['description'] === 'string'
       && typeof attributes['severity'] === 'string';
   }
@@ -86,7 +91,7 @@ export class InmetAdapter implements AlertAdapter {
   parseAlerts(attributes: Record<string, unknown>): WeatherAlert[] {
     if (!this.canHandle(attributes)) return [];
     const alert = attributes as InmetAlert;
-    const alertId = str(alert.alert_id);
+    const alertId = stringish(alert.alert_id);
     const event = str(alert.description) || 'INMET Alert';
     const { severity, label: severityLabel, inferred } = severityAndLabel(alert);
     const sentTs = timestamp(alert.updated) || timestamp(alert.start_date);

@@ -364,10 +364,10 @@ export interface NswRfsIncident {
 // geo_location entity per active alert, stamped with `source: inmet`.
 export interface InmetAlert {
   source?: string;
-  alert_id?: string;
+  alert_id?: string | number;
   description?: string;
   severity?: string;
-  severity_id?: number;
+  severity_id?: string | number;
   risks?: string | string[];
   instructions?: string | string[];
   color?: string;

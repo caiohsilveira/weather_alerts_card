@@ -34,6 +34,10 @@ describe('InmetAdapter', () => {
       expect(adapter.canHandle(makeAlert())).toBe(true);
     });
 
+    it('returns true when INMET publishes a numeric alert id', () => {
+      expect(adapter.canHandle(makeAlert({ alert_id: 12345 }))).toBe(true);
+    });
+
     it('returns false without the INMET source marker', () => {
       expect(adapter.canHandle(makeAlert({ source: 'other' }))).toBe(false);
     });
@@ -80,6 +84,15 @@ describe('InmetAdapter', () => {
       expect(alert.providerIcon).toBe('mdi:alert');
       expect(alert.colorHint).toBe('Laranja');
       expect(alert.point).toEqual([-47.0608, -22.9056]);
+    });
+
+    it('normalizes numeric ids and string severity ids from current INMET attributes', () => {
+      const [alert] = adapter.parseAlerts(makeAlert({
+        alert_id: 12345,
+        severity_id: '2',
+      }));
+      expect(alert.id).toBe('12345');
+      expect(alert.severity).toBe('severe');
     });
 
     it('uses risks as description and instructions as instruction text', () => {
