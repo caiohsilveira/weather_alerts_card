@@ -223,7 +223,8 @@ sources:
 Severity comes from INMET's textual `severity` field. The adapter maps `Perigo
 Potencial` to moderate, `Perigo` to severe, and `Grande Perigo` to extreme.
 `risks` render as the description, `instructions` render as the action text, and
-the alert URL opens the matching INMET aviso page.
+the alert URL opens the matching INMET aviso page. Set `providerColors: true` to paint
+each alert in the color INMET published for it (`aviso_cor`).
 
 INMET entities carry the configured location's coordinates, so `showGeometry`
 draws a marker rather than an affected-area outline. Those coordinates also
