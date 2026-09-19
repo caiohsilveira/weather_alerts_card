@@ -38,8 +38,8 @@ function severityFromColor(color: string): AlertSeverity | undefined {
   const c = color.trim().toLowerCase();
   if (!c) return undefined;
   if (c.includes('vermel') || c === 'red' || c === '#ff0000') return 'extreme';
-  if (c.includes('laranja') || c === 'orange' || c === '#ffa500') return 'severe';
-  if (c.includes('amarel') || c === 'yellow' || c === '#ffff00') return 'moderate';
+  if (c.includes('laranja') || c === 'orange' || c === '#f96602') return 'severe';
+  if (c.includes('amarel') || c === 'yellow' || c === '#fffe00') return 'moderate';
   return undefined;
 }
 
