@@ -25,8 +25,9 @@ function textList(v: unknown): string {
 }
 
 function timestamp(v: unknown): number {
-  if (v instanceof Date) return Number.isFinite(v.getTime()) ? v.getTime() / 1000 : 0;
-  return parseTimestamp(str(v));
+  const s = str(v).trim();
+  if (!s) return 0;
+  return parseTimestamp(/(?:[zZ]|[+-]\d\d:?\d\d)$/.test(s) ? s : `${s}-03:00`);
 }
 
 function titleCase(s: string): string {
