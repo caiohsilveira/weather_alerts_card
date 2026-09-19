@@ -104,7 +104,7 @@ export class InmetAdapter implements AlertAdapter {
       phase,
       severityInferred: inferred,
       certaintyInferred: false,
-      providerIcon: 'mdi:alert',
+      providerIcon: str(attributes['icon']) || 'mdi:alert',
       colorHint: str(alert.color),
       ...(point !== undefined && { point }),
     }];
