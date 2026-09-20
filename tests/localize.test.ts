@@ -170,19 +170,12 @@ describe('t()', () => {
   // runs, so an injected locale never reaches them.
   describe('script and region fallback', () => {
     const stub = { 'card.no_alerts': 'STUB' } as TranslationMap;
-    let previous: TranslationMap | undefined;
     const register = () => {
-      previous = translations['pt-BR'];
       translations['pt-BR'] = stub;
     };
 
     afterEach(() => {
-      if (previous) {
-        translations['pt-BR'] = previous;
-      } else {
-        delete translations['pt-BR'];
-      }
-      previous = undefined;
+      delete translations['pt-BR'];
     });
 
     it('matches an exact locale code ahead of the base subtag', () => {

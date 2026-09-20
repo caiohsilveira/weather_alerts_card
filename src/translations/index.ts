@@ -6,7 +6,6 @@ import { it } from './it';
 import { de } from './de';
 import { nl } from './nl';
 import { zhHans } from './zh-Hans';
-import { ptBR } from './pt-BR';
 
 // Keyed by Home Assistant locale code. Use the bare language subtag when there
 // is only one variant (`fr`, `de`) and the full code when the script or region
@@ -23,7 +22,6 @@ export const translations: Record<string, TranslationMap> = {
   de,
   nl,
   'zh-Hans': zhHans,
-  'pt-BR': ptBR,
 };
 
 export type { TranslationMap };
