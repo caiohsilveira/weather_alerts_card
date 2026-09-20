@@ -345,6 +345,6 @@ describe('ENTITY_NAME_PATTERNS', () => {
 
 describe('pointCapableProviders', () => {
   it('lists exactly the adapters that can populate WeatherAlert.point', () => {
-    expect([...pointCapableProviders()].sort()).toEqual(['inmet', 'nsw_rfs']);
+    expect([...pointCapableProviders()].sort()).toEqual(['cap', 'inmet', 'nsw_rfs']);
   });
 });
