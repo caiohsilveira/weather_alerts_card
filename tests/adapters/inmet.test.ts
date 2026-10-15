@@ -137,11 +137,11 @@ describe('InmetAdapter', () => {
     });
 
     it('falls back for an older INMET integration without card metadata', () => {
-      const [alert] = adapter.parseAlerts(makeAlert({
-        updated_at: undefined,
-        area: undefined,
-        bbox: undefined,
-      }));
+      const attributes = makeAlert();
+      delete attributes['updated_at'];
+      delete attributes['area'];
+      delete attributes['bbox'];
+      const [alert] = adapter.parseAlerts(attributes);
       expect(alert.sentTs).toBe(parseTimestamp('2026-01-08T10:00:00-03:00'));
       expect(alert.areaDesc).toBe('Brazil');
       expect('bbox' in alert).toBe(false);

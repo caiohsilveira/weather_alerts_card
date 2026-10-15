@@ -32,11 +32,17 @@ function timestamp(v: unknown): number {
 
 function bbox(v: unknown): [number, number, number, number] | undefined {
   if (!Array.isArray(v) || v.length !== 4) return undefined;
-  if (!v.every(n => typeof n === 'number' && Number.isFinite(n))) return undefined;
-  const [minLon, minLat, maxLon, maxLat] = v;
+  const values: readonly unknown[] = v;
+  const [minLon, minLat, maxLon, maxLat] = values;
+  if (!isFiniteNumber(minLon) || !isFiniteNumber(minLat)
+    || !isFiniteNumber(maxLon) || !isFiniteNumber(maxLat)) return undefined;
   if (minLon < -180 || maxLon > 180 || minLat < -90 || maxLat > 90) return undefined;
   if (minLon > maxLon || minLat > maxLat) return undefined;
   return [minLon, minLat, maxLon, maxLat];
+}
+
+function isFiniteNumber(v: unknown): v is number {
+  return typeof v === 'number' && Number.isFinite(v);
 }
 
 function titleCase(s: string): string {
